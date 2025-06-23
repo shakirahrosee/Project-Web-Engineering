@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Collapp Login</title>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #a8edea, #fed6e3);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .logo {
+      width: 100px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+    }
+
+    h2 {
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 15px;
+      margin: 10px 0;
+      border: 1.5px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .login-btn {
+      background-color: #4e89ae;
+    }
+
+    .login-btn:hover {
+      background-color: #3b6e8c;
+      transform: scale(1.03);
+    }
+
+    .google-btn {
+      background-color: #db4437;
+    }
+
+    .google-btn:hover {
+      background-color: #b9382d;
+      transform: scale(1.03);
+    }
+
+    .register-link {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .register-link a {
+      color: #4e89ae;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .register-link a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 30px 20px;
+      }
+
+      .logo {
+        width: 80px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <img src="Coll4pp.jpg" alt="Collapp Logo" class="logo" />
+    <h2>Welcome to COLL4PP</h2>
+    <form id="loginForm">
+      <input type="email" id="email" placeholder="Enter your email" required />
+      <input type="password" id="password" placeholder="Enter your password" required />
+      
+      <button type="submit" class="btn login-btn">Login</button>
+    </form>
+
+    <!-- Automatic authentication using Spring Security -->
+    <form th:action="@{/login}" method="post">
+      <input type="email" name="username" placeholder="Enter your email" required />
+      <input type="password" name="password" placeholder="Enter your password" required />
+      <button type="submit">Login</button>
+    </form>
+    <a class="register-link" th:href="@{/auth/register}">Register</a>
+
+    <!-- <p class="register-link">
+      First time user? <a href="register.html">Register here</a>
+    </p> -->
+  </div>
+
+  <script>
+    // document.getElementById('loginForm').addEventListener('submit', function(e) {
+    //   e.preventDefault();
+    //   const email = document.getElementById('email').value;
+    //   const password = document.getElementById('password').value;
+
+    //   alert(`Logging in with:\nEmail: ${email}\nPassword: ${'*'.repeat(password.length)}`);
+
+    //   // Simulate successful login then redirect to homepage
+    //   setTimeout(() => {
+    //     window.location.href = "homepage.html";
+    //   }, 1000);
+    // });
+  </script>
+
+</body>
+</html>

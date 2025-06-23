@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>COLL4PP Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #a1c4fd, #c2e9fb);
+      padding: 20px;
+      color: #333;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    header h1 {
+      font-size: 36px;
+      color: #2c3e50;
+      text-shadow: 1px 1px 2px #fff;
+    }
+
+    .section {
+      margin-bottom: 40px;
+      background: white;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .section h2 {
+      font-size: 24px;
+      color: #34495e;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+    }
+
+    .emoji {
+      margin-left: 10px;
+      font-size: 1.4em;
+      animation: bounce 1.5s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-5px);
+      }
+    }
+
+    .announcement {
+      background: linear-gradient(120deg, #f093fb, #f5576c);
+      color: white;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .announcement ul {
+      list-style: square;
+      margin-left: 20px;
+    }
+
+    .schedule-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .schedule-table th, .schedule-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+
+    .schedule-table th {
+      background-color: #ecf0f1;
+    }
+
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+      background: #f0f3f5;
+      padding: 15px;
+      border-radius: 20px;
+    }
+
+    .calendar div {
+      padding: 10px;
+      background-color: #dfe6e9;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+
+    .calendar .day {
+      background-color: #636e72;
+      color: white;
+    }
+
+    .calendar .today {
+      background-color: #0984e3 !important;
+      color: white !important;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(9, 132, 227, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(9, 132, 227, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(9, 132, 227, 0); }
+    }
+
+    .nav-buttons {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .nav-buttons a {
+      display: inline-block;
+      text-decoration: none;
+      background-color: #27ae60;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+      margin: 0 10px;
+    }
+
+    .nav-buttons a:hover {
+      background-color: #219150;
+    }
+
+    .back-btn {
+      display: inline-block;
+      margin-top: 30px;
+      text-decoration: none;
+      background-color: #3498db;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+      text-align: center;
+    }
+
+    .back-btn:hover {
+      background-color: #2980b9;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>COLL4PP Weekly Dashboard</h1>
+  </header>
+
+  <div class="nav-buttons">
+    <a href="user-task.html">📝 Manage My Tasks</a>
+  </div>
+
+  <!-- Chart Section -->
+  <section class="section">
+    <h2>Weekly Busyness Chart <span class="emoji">📊</span></h2>
+    <canvas id="busynessChart" height="100"></canvas>
+  </section>
+
+  <!-- Schedule Table -->
+  <section class="section">
+    <h2>Daily Task Schedule (7AM - 5PM) <span class="emoji">🗂️</span></h2>
+    <table class="schedule-table">
+      <tr>
+        <th>Day</th>
+        <th>7AM - 9AM</th>
+        <th>9AM - 11AM</th>
+        <th>11AM - 1PM</th>
+        <th>1PM - 3PM</th>
+        <th>3PM - 5PM</th>
+      </tr>
+      <tr>
+        <td>Monday</td><td>UI Wireframe</td><td>Design Review</td><td>Frontend Coding</td><td>Break</td><td>API Integration</td>
+      </tr>
+      <tr>
+        <td>Tuesday</td><td>Bug Fixes</td><td>New Module</td><td>Meeting</td><td>Break</td><td>Database Setup</td>
+      </tr>
+      <tr>
+        <td>Wednesday</td><td>Client Update</td><td>Testing</td><td>Documentation</td><td>Break</td><td>Security Check</td>
+      </tr>
+      <tr>
+        <td>Thursday</td><td>Deployment</td><td>QA Review</td><td>Performance Test</td><td>Break</td><td>Debugging</td>
+      </tr>
+      <tr>
+        <td>Friday</td><td>Retrospective</td><td>Cleanup Code</td><td>Final Push</td><td>Break</td><td>Presentation Prep</td>
+      </tr>
+    </table>
+  </section>
+
+  <!-- Announcement -->
+  <section class="section announcement">
+    <h2>📢 Important Announcements</h2>
+    <ul>
+      <li>🚀 Launch day on Friday 4 PM. All modules must be committed by 3 PM.</li>
+      <li>🎥 Team Meeting via Zoom every Wednesday 10 AM.</li>
+      <li>🛠️ Server maintenance planned next Monday.</li>
+      <li>📩 Check your email daily for updates!</li>
+    </ul>
+  </section>
+
+  <!-- Monthly Calendar -->
+  <section class="section">
+    <h2>🗓️ Monthly Calendar – <span id="monthYear"></span></h2>
+    <div class="calendar" id="calendar">
+      <!-- Calendar will be generated here -->
+    </div>
+  </section>
+
+  <!-- Back to Index -->
+  <div style="text-align: center;">
+    <a href="index.html" class="back-btn">⬅️ Back to Login</a>
+  </div>
+
+  <!-- JS Section -->
+  <script>
+    // Busyness Chart
+    const ctx = document.getElementById('busynessChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+        datasets: [{
+          label: 'Busyness (%)',
+          data: [80, 60, 90, 75, 50],
+          backgroundColor: ['#6c5ce7', '#00cec9', '#fd79a8', '#fab1a0', '#55efc4']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          title: {
+            display: true,
+            text: 'Weekly Task Load by Day'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100
+          }
+        }
+      }
+    });
+
+    // Calendar Generator
+    const calendar = document.getElementById('calendar');
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth(); // 0-indexed
+    const todayDate = now.getDate();
+
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+
+    document.getElementById('monthYear').textContent = `${monthNames[month]} ${year}`;
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const lastDate = new Date(year, month + 1, 0).getDate();
+
+    const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    dayNames.forEach(day => {
+      const div = document.createElement('div');
+      div.className = 'day';
+      div.textContent = day;
+      calendar.appendChild(div);
+    });
+
+    for (let i = 0; i < firstDay; i++) {
+      calendar.appendChild(document.createElement('div'));
+    }
+
+    for (let i = 1; i <= lastDate; i++) {
+      const div = document.createElement('div');
+      div.textContent = i;
+      if (i === todayDate) div.classList.add('today');
+      calendar.appendChild(div);
+    }
+  </script>
+</body>
+</html>

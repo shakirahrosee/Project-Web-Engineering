@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register - COLL4PP</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #c2e9fb, #fcb69f);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .register-container {
+      background: linear-gradient(to right bottom, rgba(255, 255, 255, 0.9), rgba(240, 248, 255, 0.9));
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      padding: 40px 30px;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .register-container:hover {
+      transform: scale(1.01);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+    }
+
+    .logo {
+      width: 100px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+    }
+
+    h2 {
+      color: #2f4f6f;
+      margin-bottom: 25px;
+      font-size: 26px;
+    }
+
+    .form-group {
+      text-align: left;
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #444;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1.5px solid #ccc;
+      font-size: 15px;
+      background-color: #fdfdfd;
+      transition: border-color 0.3s ease, box-shadow 0.2s ease;
+    }
+
+    .form-group input:focus {
+      border-color: #4e89ae;
+      box-shadow: 0 0 6px rgba(78, 137, 174, 0.4);
+      outline: none;
+      background-color: #ffffff;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background-color: #4e89ae;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn:hover {
+      background-color: #3b6e8c;
+      transform: translateY(-2px);
+    }
+
+    .error-message {
+      color: red;
+      font-size: 14px;
+      display: none;
+      margin-top: -10px;
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: 480px) {
+      .register-container {
+        padding: 30px 20px;
+      }
+
+      .logo {
+        width: 80px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="register-container">
+    <img src="Coll4pp.jpg" alt="Collapp Logo" class="logo" />
+    <h2>Create Your Collapp Account</h2>
+
+    <form th:action="@{/auth/register}" th:object="${user}" method="post" onsubmit="return validatePasswordMatch()">
+      <input type="text" th:field="*{username}" placeholder="Username" required />
+      <input type="email" th:field="*{email}" placeholder="Email" required />
+      <input type="password" id="password" th:field="*{password}" placeholder="Password" required />
+      <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required />
+      <p id="error-message" style="color: red; display: none;">Passwords do not match!</p>
+      <button type="submit">Register</button>
+    </form>
+  </div>
+
+  <script>
+    function validatePasswordMatch() {
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const errorMsg = document.getElementById('error-message');
+
+      if (password !== confirmPassword) {
+        errorMsg.style.display = 'block';
+        return false;
+      }
+      errorMsg.style.display = 'none';
+      return true;
+    }
+  </script>
+
+</body>
+</html>
