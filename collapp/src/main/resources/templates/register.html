@@ -116,21 +116,6 @@
   </style>
 </head>
 <body>
-
-  <!-- <div class="register-container">
-    <img src="Coll4pp.jpg" alt="Collapp Logo" class="logo" />
-    <h2>Create Your Collapp Account</h2>
-
-    <form th:action="@{/auth/register}" th:object="${user}" method="post" onsubmit="return validatePasswordMatch()">
-      <input type="text" th:field="*{username}" placeholder="Username" required />
-      <input type="email" th:field="*{email}" placeholder="Email" required />
-      <input type="password" id="password" th:field="*{password}" placeholder="Password" required />
-      <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required />
-      <p id="error-message" style="color: red; display: none;">Passwords do not match!</p>
-      <button type="submit">Register</button>
-    </form>
-  </div> -->
-
   <div class="register-container">
     <img th:src="@{/Coll4pp.jpg}" alt="Collapp Logo" class="logo" />
     <h2>Create Your Collapp Account</h2>
@@ -175,6 +160,5 @@
       return true;
     }
   </script>
-
 </body>
 </html>

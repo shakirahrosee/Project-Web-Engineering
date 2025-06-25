@@ -113,13 +113,6 @@
   <div class="container">
     <img th:src="@{/Coll4pp.jpg}" alt="Collapp Logo" class="logo" />
     <h2>Welcome to COLL4PP</h2>
-    <!-- <form id="loginForm">
-      <input type="email" id="email" placeholder="Enter your email" required />
-      <input type="password" id="password" placeholder="Enter your password" required />
-      
-      <button type="submit" class="btn login-btn">Login</button>
-    </form> -->
-
     <!-- Automatic authentication using Spring Security -->
     <form th:action="@{/login}" method="post">
       <input type="email" name="username" placeholder="Enter your email" required />
@@ -127,26 +120,6 @@
       <button type="submit" class="btn login-btn">Login</button>
     </form>
     First time user? <a class="register-link" th:href="@{/auth/register}">Register here</a>
-
-    <!-- <p class="register-link">
-      First time user? <a href="register.html">Register here</a>
-    </p> -->
   </div>
-
-  <script>
-    // document.getElementById('loginForm').addEventListener('submit', function(e) {
-    //   e.preventDefault();
-    //   const email = document.getElementById('email').value;
-    //   const password = document.getElementById('password').value;
-
-    //   alert(`Logging in with:\nEmail: ${email}\nPassword: ${'*'.repeat(password.length)}`);
-
-    //   // Simulate successful login then redirect to homepage
-    //   setTimeout(() => {
-    //     window.location.href = "homepage.html";
-    //   }, 1000);
-    // });
-  </script>
-
 </body>
 </html>

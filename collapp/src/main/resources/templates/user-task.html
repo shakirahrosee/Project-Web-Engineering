@@ -202,11 +202,6 @@
       <label for="notes">Notes <span class="emoji">🗒️</span></label>
       <textarea name="notes" id="notes" placeholder="Nota tambahan..."></textarea>
 
-      <!-- <label for="userIds">Assigned To <span class="emoji">👤</span></label>
-      <select name="userIds" id="userIds" multiple required>
-        <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.username}"></option>
-      </select> -->
-
       <label>Assigned To <span class="emoji">👤</span></label>
       <div id="userCheckboxes" style="margin-top: 6px;">
         <div th:each="user : ${users}">
@@ -329,13 +324,6 @@
       document.getElementById('date')._flatpickr.setDate(cells[1].innerText);
       document.getElementById('priority').value = cells[2].innerText;
       document.getElementById('notes').value = cells[4].innerText;
-
-      // Clear and reselect userIds
-      // const userSelect = document.getElementById('userIds');
-      // Array.from(userSelect.options).forEach(opt => {
-      //   opt.selected = assignedUserIds.includes(opt.value);
-      // });
-
       assignedUserIds.forEach(id => {
         const checkbox = document.querySelector(`#userCheckboxes input[value="${id}"]`);
         if (checkbox) checkbox.checked = true;
