@@ -200,7 +200,7 @@
       </select>
 
       <label for="notes">Notes <span class="emoji">🗒️</span></label>
-      <textarea name="notes" id="notes" placeholder="Additional notes..."></textarea>
+      <textarea name="notes" id="notes" placeholder="Nota tambahan..."></textarea>
 
       <!-- <label for="userIds">Assigned To <span class="emoji">👤</span></label>
       <select name="userIds" id="userIds" multiple required>
@@ -249,7 +249,7 @@
             <td>
               <button class="action-btn edit-btn" type="button" onclick="editTask(this)">Edit</button>
               <form th:action="@{/tasks/delete}" method="post" style="display:inline">
-                <input type="hidden" name="taskId" th:value="${task.id}" />
+                <input type="hidden" name="id" th:value="${task.id}" />
                 <button class="action-btn delete-btn" type="submit">Delete</button>
               </form>
             </td>
@@ -317,6 +317,9 @@
     });
   
     function editTask(button) {
+      document.querySelectorAll('#userCheckboxes input[type="checkbox"]').forEach(cb => {
+        cb.checked = false;
+      });
       const row = button.closest('tr');
       const taskId = row.getAttribute('data-task-id');
       const assignedUserIds = row.getAttribute('data-user-ids').split(',').map(id => id.trim());
@@ -369,6 +372,9 @@
       document.getElementById('priority').value = "";
       document.getElementById('notes').value = "";
 
+      document.querySelectorAll('#userCheckboxes input[type="checkbox"]').forEach(cb => {
+        cb.checked = false;
+      });
       document.getElementById('submit-btn').innerText = 'Create Task';
       document.getElementById('cancel-btn').style.display = "none";
       document.getElementById('submit-mode').value = "new";

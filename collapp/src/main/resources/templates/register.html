@@ -132,7 +132,7 @@
   </div> -->
 
   <div class="register-container">
-    <img src="Coll4pp.jpg" alt="Collapp Logo" class="logo" />
+    <img th:src="@{/Coll4pp.jpg}" alt="Collapp Logo" class="logo" />
     <h2>Create Your Collapp Account</h2>
     
     <form th:action="@{/auth/register}" th:object="${user}" method="post" onsubmit="return validatePasswordMatch()">

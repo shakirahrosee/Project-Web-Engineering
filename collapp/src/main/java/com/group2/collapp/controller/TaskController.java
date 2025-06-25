@@ -2,6 +2,7 @@ package com.group2.collapp.controller;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,7 +30,13 @@ public class TaskController {
     @GetMapping("/my")
     public String userTasks(Model model, Principal principal) {
         model.addAttribute("users", userService.getAllUsers());
-        model.addAttribute("tasks", taskService.getAllTasks());
+        model.addAttribute("tasks", taskService.getAllTasks().stream().map(task -> {
+            String userIds = task.getAssignedUsers().stream()
+                                .map(u -> String.valueOf(u.getId()))
+                                .collect(Collectors.joining(","));
+            task.setUserIdsString(userIds); // Add a helper field in Task
+            return task;
+        }).toList());
         return "user-task";
     }
 
