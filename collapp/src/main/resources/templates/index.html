@@ -113,20 +113,20 @@
   <div class="container">
     <img src="Coll4pp.jpg" alt="Collapp Logo" class="logo" />
     <h2>Welcome to COLL4PP</h2>
-    <form id="loginForm">
+    <!-- <form id="loginForm">
       <input type="email" id="email" placeholder="Enter your email" required />
       <input type="password" id="password" placeholder="Enter your password" required />
       
       <button type="submit" class="btn login-btn">Login</button>
-    </form>
+    </form> -->
 
     <!-- Automatic authentication using Spring Security -->
     <form th:action="@{/login}" method="post">
       <input type="email" name="username" placeholder="Enter your email" required />
       <input type="password" name="password" placeholder="Enter your password" required />
-      <button type="submit">Login</button>
+      <button type="submit" class="btn login-btn">Login</button>
     </form>
-    <a class="register-link" th:href="@{/auth/register}">Register</a>
+    First time user? <a class="register-link" th:href="@{/auth/register}">Register here</a>
 
     <!-- <p class="register-link">
       First time user? <a href="register.html">Register here</a>

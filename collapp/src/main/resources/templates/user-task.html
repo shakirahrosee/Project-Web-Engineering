@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>User Task Page</title>
@@ -61,7 +62,7 @@
     }
 
     input, textarea, select {
-      width: 100%;
+      width: 95%;
       padding: 10px;
       border: 2px solid #ddd;
       border-radius: 6px;
@@ -82,6 +83,17 @@
 
     button.create-btn {
       background-color: #e67e22;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    button.cancel-btn {
+      background-color: #c0392b;
       color: white;
       padding: 10px 20px;
       border: none;
@@ -146,141 +158,222 @@
       background-color: #c0392b;
       color: white;
     }
+
+    .error-message {
+      color: red;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    #userCheckboxes label {
+      display: block;
+      margin-bottom: 5px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
+  <div class="container">
+    <header>
+      <h1>User Task Page 📝</h1>
+      <a href="/tasks/homepage" class="home-button">🏠 Homepage</a>
+    </header>
+  
+    <div class="introduction">
+      Selamat datang ke halaman pengurusan tugasan harian anda! Di sini anda boleh cipta, sunting, dan padam tugasan harian berdasarkan masa dan hari yang anda pilih. 💼💪
+    </div>
+  
+    <form id="taskForm">
+      <input type="hidden" id="submit-mode" value="new" readonly/>
+      <label for="name">Create New Task <span class="emoji">✨</span></label>
+      <input type="text" name="name" id="name" required placeholder="Contoh: Siapkan kerja kursus"/>
+  
+      <label for="date">Date <span class="emoji">📅</span></label>
+      <input type="text" name="date" id="date" required placeholder="Select a date"/>
 
-<div class="container">
-  <header>
-    <h1>User Task Page 📝</h1>
-    <a href="#" class="homepage.html">🏠 Homepage</a>
-  </header>
+      <label for="priority">Priority <span class="emoji">⚠️</span></label>
+      <select name="priority" id="priority" required>
+        <option value="">-- Select Priority --</option>
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
 
-  <div class="introduction">
-    Selamat datang ke halaman pengurusan tugasan harian anda! Di sini anda boleh cipta, sunting, dan padam tugasan harian berdasarkan masa dan hari yang anda pilih. 💼💪
+      <label for="notes">Notes <span class="emoji">🗒️</span></label>
+      <textarea name="notes" id="notes" placeholder="Additional notes..."></textarea>
+
+      <!-- <label for="userIds">Assigned To <span class="emoji">👤</span></label>
+      <select name="userIds" id="userIds" multiple required>
+        <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.username}"></option>
+      </select> -->
+
+      <label>Assigned To <span class="emoji">👤</span></label>
+      <div id="userCheckboxes" style="margin-top: 6px;">
+        <div th:each="user : ${users}">
+          <label style="display: block; margin-bottom: 4px;">
+            <input type="checkbox" name="userIds" th:value="${user.id}" style="width: initial"/>
+            <span th:text="${user.username}"></span>
+          </label>
+        </div>
+      </div>
+  
+      <p class="error-message" id="errorMsg" style="display: none;">All fields are required.</p>
+      <button id="submit-btn" type="submit" class="create-btn">Create Task</button>
+      <button id="cancel-btn" class="cancel-btn" type="button" onclick="cancelEdit()" style="display: none;">Cancel edit</button>
+    </form>
+  
+    <div class="task-section" id="taskSection">
+      <table class="task-table">
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Date</th>
+            <th>Priority</th>
+            <th>Assigned To</th>
+            <th>Notes</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="taskBody" th:fragment="taskRows">
+          <tr th:each="task : ${tasks}" 
+            th:data-task-id="${task.id}"
+            th:attr="data-user-ids=${task.userIdsString}">
+            
+            <td th:text="${task.name}"></td>
+            <td th:text="${task.date}"></td>
+            <td th:text="${task.priority}"></td>
+            <td>
+              <div th:each="user : ${task.assignedUsers}" th:text="${user.username + ' '}"></div>
+            </td>
+            <td th:text="${task.notes}"></td>
+            <td>
+              <button class="action-btn edit-btn" type="button" onclick="editTask(this)">Edit</button>
+              <form th:action="@{/tasks/delete}" method="post" style="display:inline">
+                <input type="hidden" name="taskId" th:value="${task.id}" />
+                <button class="action-btn delete-btn" type="submit">Delete</button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
+  
+  <script>
+    const taskForm = document.getElementById('taskForm');
+    const errorMsg = document.getElementById('errorMsg');
+  
+    taskForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      errorMsg.style.display = 'none';
 
-  <form id="taskForm">
-    <label for="taskName">Create New Task <span class="emoji">✨</span></label>
-    <input type="text" id="taskName" required placeholder="Contoh: Siapkan kerja kursus"/>
+      const name = document.getElementById('name').value.trim();
+      const date = document.getElementById('date').value;
+      const priority = document.getElementById('priority').value;
+      const notes = document.getElementById('notes').value.trim();
+      // const userIds = Array.from(document.getElementById('userIds').selectedOptions).map(opt => opt.value);
+      const userIds = Array.from(document.querySelectorAll('input[name="userIds"]:checked'))
+                     .map(cb => cb.value);
 
-    <label for="taskDesc">Description <span class="emoji">📝</span></label>
-    <textarea id="taskDesc" required placeholder="Contoh: Hantar laporan sebelum jam 5 petang."></textarea>
 
-    <label for="taskDay">Select Day <span class="emoji">📅</span></label>
-    <select id="taskDay" required>
-      <option value="">-- Pilih Hari --</option>
-      <option value="Monday">Isnin</option>
-      <option value="Tuesday">Selasa</option>
-      <option value="Wednesday">Rabu</option>
-      <option value="Thursday">Khamis</option>
-      <option value="Friday">Jumaat</option>
-      <option value="Saturday">Sabtu</option>
-      <option value="Sunday">Ahad</option>
-    </select>
+      const formData = new URLSearchParams();
+      formData.append("name", name);
+      formData.append("date", date);
+      formData.append("priority", priority);
+      formData.append("notes", notes);
+      userIds.forEach(id => formData.append("userIds", id));
 
-    <label for="taskTime">Select Time <span class="emoji">⏰</span></label>
-    <input type="time" id="taskTime" required/>
+      if (!name || !date || !priority || userIds.length === 0) {
+        errorMsg.style.display = 'block';
+        return;
+      }
 
-    <label for="assignedTo">Assigned To <span class="emoji">👤</span></label>
-    <select id="assignedTo" required>
-      <option value="">-- Pilih Nama --</option>
-      <option value="Aiman">Aiman</option>
-      <option value="Siti">Siti</option>
-      <option value="Zul">Zul</option>
-      <option value="Nina">Nina</option>
-    </select>
+      var taskIdElement = document.getElementById('taskId');
+      if (taskIdElement != null){
+        formData.append("id", taskIdElement.value);
+      }
 
-    <button type="submit" class="create-btn">+ Create Task</button>
-  </form>
+      let editMode = document.getElementById('submit-mode').value;
+      let response;
+      if (editMode == "new"){
+        response = await fetch('/tasks/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formData.toString()
+        });
+      } else if (editMode == "edit"){
+        response = await fetch('/tasks/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formData.toString()
+        });
+      }
 
-  <div class="task-section" id="taskSection">
-    <!-- Jadual tugasan mengikut hari akan dimasukkan di sini -->
-  </div>
-</div>
-
-<script>
-  const taskForm = document.getElementById('taskForm');
-  const taskSection = document.getElementById('taskSection');
-
-  let tasks = [];
-
-  taskForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-
-    const taskName = document.getElementById('taskName').value.trim();
-    const taskDesc = document.getElementById('taskDesc').value.trim();
-    const taskDay = document.getElementById('taskDay').value;
-    const taskTime = document.getElementById('taskTime').value;
-    const assignedTo = document.getElementById('assignedTo').value;
-
-    if (taskName && taskDesc && taskDay && taskTime && assignedTo) {
-      const task = { taskName, taskDesc, taskDay, taskTime, assignedTo };
-      tasks.push(task);
-      renderTasks();
-      taskForm.reset();
-    }
-  });
-
-  function renderTasks() {
-    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-    taskSection.innerHTML = '';
-
-    days.forEach(day => {
-      const dayTasks = tasks.filter(task => task.taskDay === day);
-      if (dayTasks.length > 0) {
-        const section = document.createElement('div');
-        section.innerHTML = `
-          <div class="task-day-title">${day}</div>
-          <table class="task-table">
-            <thead>
-              <tr>
-                <th>Task</th>
-                <th>Description</th>
-                <th>Time</th>
-                <th>Assigned To</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${dayTasks.map((task, index) => `
-                <tr>
-                  <td>${task.taskName}</td>
-                  <td>${task.taskDesc}</td>
-                  <td>${task.taskTime}</td>
-                  <td>${task.assignedTo}</td>
-                  <td>
-                    <button class="action-btn edit-btn" onclick="editTask(${index})">Edit</button>
-                    <button class="action-btn delete-btn" onclick="deleteTask(${index})">Delete</button>
-                  </td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        `;
-        taskSection.appendChild(section);
+      if (response.ok) {
+        location.reload();
+      } else {
+        alert('Failed to create task.');
       }
     });
-  }
+  
+    function editTask(button) {
+      const row = button.closest('tr');
+      const taskId = row.getAttribute('data-task-id');
+      const assignedUserIds = row.getAttribute('data-user-ids').split(',').map(id => id.trim());
 
-  function deleteTask(index) {
-    if (confirm('Are you sure you want to delete this task?')) {
-      tasks.splice(index, 1);
-      renderTasks();
+      const cells = row.children;
+      document.getElementById('name').value = cells[0].innerText;
+      document.getElementById('date')._flatpickr.setDate(cells[1].innerText);
+      document.getElementById('priority').value = cells[2].innerText;
+      document.getElementById('notes').value = cells[4].innerText;
+
+      // Clear and reselect userIds
+      // const userSelect = document.getElementById('userIds');
+      // Array.from(userSelect.options).forEach(opt => {
+      //   opt.selected = assignedUserIds.includes(opt.value);
+      // });
+
+      assignedUserIds.forEach(id => {
+        const checkbox = document.querySelector(`#userCheckboxes input[value="${id}"]`);
+        if (checkbox) checkbox.checked = true;
+      });
+
+      // Ensure taskId is stored
+      let hidden = document.getElementById('taskId');
+      if (!hidden) {
+        hidden = document.createElement('input');
+        hidden.type = 'hidden';
+        hidden.name = 'taskId';
+        hidden.id = 'taskId';
+        taskForm.appendChild(hidden);
+      }
+      hidden.value = taskId;
+
+      document.getElementById('submit-btn').innerText = 'Update Task';
+      document.getElementById('cancel-btn').style.display = "initial";
+      document.getElementById('submit-mode').value = "edit";
     }
-  }
 
-  function editTask(index) {
-    const task = tasks[index];
-    document.getElementById('taskName').value = task.taskName;
-    document.getElementById('taskDesc').value = task.taskDesc;
-    document.getElementById('taskDay').value = task.taskDay;
-    document.getElementById('taskTime').value = task.taskTime;
-    document.getElementById('assignedTo').value = task.assignedTo;
-    tasks.splice(index, 1);
-    renderTasks();
-  }
-</script>
+    document.addEventListener("DOMContentLoaded", function () {
+      flatpickr("#date", {
+        altInput: true,
+        altFormat: "F j, Y",
+        dateFormat: "Y-m-d",
+        defaultDate: "today"
+      });
+    });
 
-</body>
+    function cancelEdit(){
+      document.getElementById('taskId').remove();
+      document.getElementById('name').value = "";
+      document.getElementById('priority').value = "";
+      document.getElementById('notes').value = "";
+
+      document.getElementById('submit-btn').innerText = 'Create Task';
+      document.getElementById('cancel-btn').style.display = "none";
+      document.getElementById('submit-mode').value = "new";
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  </body>
 </html>

@@ -5,9 +5,9 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.group2.collapp.model.Comment;
+import com.group2.collapp.model.Activity;
 
 @Repository
-public interface CommentRepository extends JpaRepository<Comment, Long> {
-    List<Comment> findByTaskId(Long taskId);
+public interface ActivityRepository extends JpaRepository<Activity, Long> {
+    List<Activity> findTop5ByOrderByIdDesc();
 }
